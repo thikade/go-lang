@@ -77,6 +77,21 @@ func main() {
 
 	})
 
+	router.HandleFunc("/render/{tpl:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		v := mux.Vars(r)
+		id := v["tpl"]
+
+		myT := template.Must(template.ParseGlob(fmt.Sprintf("templates/external_%s.tpl", id)))
+
+		buffer := bytes.Buffer{}
+		err = myT.Execute(&buffer, pets)
+		if err != nil {
+			panic(err)
+		}
+		w.Write(buffer.Bytes())
+
+	})
+
 	// default server from FS
 	router.PathPrefix("/").Handler(http.FileServer(http.FS(publicFS)))
 
