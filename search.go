@@ -34,8 +34,8 @@ func (obj *SearchObj) Validate() bool {
 		// log.Println("DEBUG: errors.Token set to nonzero value")
 	}
 
-	return len(obj.Errors) == 0
-	// return true
+	// return len(obj.Errors) == 0
+	return true
 }
 
 func (obj *SearchObj) ExecuteSearch() bool {
