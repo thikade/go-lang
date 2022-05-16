@@ -42,7 +42,7 @@ func (obj *SearchObj) ExecuteSearch() bool {
 	var results int = rand.Intn(20) + 1
 	obj.TotalResults = results
 	obj.Results = make([]string, results, results)
-	for index, _ := range obj.Results {
+	for index := range obj.Results {
 		obj.Results[index] = fmt.Sprintf("%d", (index+1)*3)
 	}
 	return true

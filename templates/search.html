@@ -25,8 +25,8 @@
 </form>
 <hr>
 <div>
-    <h2>Results</h2>
     {{- if .TotalResults }}
+    <h2>Results: {{ .TotalResults }}</h2>
     <table>
         <tbody>
             {{- range $i, $e := .Results }}
@@ -37,6 +37,7 @@
         </tbody>
     </table>
     {{- else }}
-    n/a
+    <h2>Results</h2>
+    None
     {{- end }}
 </div>
