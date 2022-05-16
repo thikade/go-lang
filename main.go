@@ -48,6 +48,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	templateFile_demo1, err := fsContent.ReadFile("templates/demo1.tpl")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	t_demo1 := template.Must(template.New("table").Parse(string(templateFile_demo1)))
+
 	// https://gowebexamples.com/routes-using-gorilla-mux/
 	router.HandleFunc("/customer/{id:[-a-zA-Z_0-9.]+}", func(w http.ResponseWriter, r *http.Request) {
 		v := mux.Vars(r)
@@ -60,14 +67,9 @@ func main() {
 	})
 
 	router.HandleFunc("/render", func(w http.ResponseWriter, r *http.Request) {
-		templateFile, err := fsContent.ReadFile("templates/demo1.tpl")
-		if err != nil {
-			log.Fatal(err)
-		}
-		t := template.Must(template.New("table").Parse(string(templateFile)))
 
 		buffer := bytes.Buffer{}
-		err = t.Execute(&buffer, pets)
+		err = t_demo1.Execute(&buffer, pets)
 		if err != nil {
 			panic(err)
 		}
