@@ -1,7 +1,9 @@
 package main
 
 import (
+	"embed"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"time"
@@ -9,8 +11,27 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// docRoot holds our static
+//go:embed public/*
+// //go:embed css/*
+var docRoot embed.FS
+
 func main() {
 	router := mux.NewRouter()
+	port := 8080
+	s := &http.Server{
+		Addr:           fmt.Sprintf(":%d", port),
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+		Handler:        router,
+	}
+	http.FileServer(http.FS(docRoot))
+	distFS, err := fs.Sub(docRoot, "public")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	router.HandleFunc("/customer/{id:[-a-zA-Z_0-9.]+}", func(w http.ResponseWriter, r *http.Request) {
 		v := mux.Vars(r)
 		id := v["id"]
@@ -20,14 +41,10 @@ func main() {
 			http.Error(w, fmt.Sprintf("Customer %s not found", id), http.StatusNotFound)
 		}
 	})
-	port := 8080
-	s := &http.Server{
-		Addr:           fmt.Sprintf(":%d", port),
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-		Handler:        router,
-	}
+
+	// default server from FS
+	router.PathPrefix("/").Handler(http.FileServer(http.FS(distFS)))
+
 	log.Printf("Listening on port: %d\n", port)
 	log.Fatal(s.ListenAndServe())
 
