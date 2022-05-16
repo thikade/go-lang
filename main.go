@@ -27,7 +27,7 @@ func main() {
 		Handler:        router,
 	}
 	http.FileServer(http.FS(docRoot))
-	distFS, err := fs.Sub(docRoot, "public")
+	publicFS, err := fs.Sub(docRoot, "public")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,7 +43,7 @@ func main() {
 	})
 
 	// default server from FS
-	router.PathPrefix("/").Handler(http.FileServer(http.FS(distFS)))
+	router.PathPrefix("/").Handler(http.FileServer(http.FS(publicFS)))
 
 	log.Printf("Listening on port: %d\n", port)
 	log.Fatal(s.ListenAndServe())
