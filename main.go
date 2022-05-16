@@ -115,24 +115,19 @@ func main() {
 	// ********************************
 	router.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
 		// Step 1: Validate form
-		msg := &SearchObj{
+		search := &SearchObj{
 			Days:  r.PostFormValue("days"),
 			Token: r.PostFormValue("token"),
 		}
 		// log.Println("DEBUG: PRE Validation")
-		if msg.Validate() == false {
-			render(w, "templates/search.html", msg)
+		if search.Validate() == false {
+			render(w, "templates/search.html", search)
 			return
 		}
 
-		// log.Println("DEBUG: Showing results")
-		obj := &SearchObj{
-			TotalResults: 5,
-			Results:      []string{"FOO", "B", "C", "D", "E"},
-		}
-
+		search.ExecuteSearch()
 		// render results template
-		render(w, "templates/search.html", obj)
+		render(w, "templates/search.html", search)
 
 	}).Methods("POST")
 
