@@ -81,7 +81,11 @@ func main() {
 		v := mux.Vars(r)
 		id := v["tpl"]
 
-		myT := template.Must(template.ParseGlob(fmt.Sprintf("templates/external_%s.tpl", id)))
+		myT, err := template.ParseGlob(fmt.Sprintf("templates/external_%s.tpl", id))
+		if err != nil {
+			http.Error(w, fmt.Sprintf("404: template not found: templates/external_%s.tpl", id), http.StatusNotFound)
+			return
+		}
 
 		buffer := bytes.Buffer{}
 		err = myT.Execute(&buffer, pets)
