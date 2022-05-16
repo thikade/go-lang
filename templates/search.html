@@ -1,0 +1,42 @@
+<style type="text/css">
+    .error {
+        color: red;
+    }
+</style>
+<h1>Search </h1>
+<form action="/search" method="POST" novalidate>
+    <div>
+        {{with .Errors.Days }}
+        <p class="error">{{ . }}</p>
+        {{ end }}
+        <p><label>Days to query:</label></p>
+        <p><input type="string" name="days"></p>
+    </div>
+    <div>
+        {{with .Errors.Token }}
+        <p class="error">{{ . }}</p>
+        {{ end }}
+        <p><label>Token to search for:</label></p>
+        <p><input type="string" name="token"></p>
+    </div>
+    <div>
+        <input type="submit" value="Search!">
+    </div>
+</form>
+<hr>
+<div>
+    <h2>Results</h2>
+    {{- if .TotalResults }}
+    <table>
+        <tbody>
+            {{- range $i, $e := .Results }}
+            <tr>
+                <td> {{ $e }} </td>
+            </tr>
+            {{- end }}
+        </tbody>
+    </table>
+    {{- else }}
+    n/a
+    {{- end }}
+</div>
