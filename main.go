@@ -13,7 +13,7 @@ import (
 
 // docRoot holds our static
 //go:embed public/*
-// //go:embed css/*
+// //go:embed templates/*
 var docRoot embed.FS
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 		Handler:        router,
 	}
-	http.FileServer(http.FS(docRoot))
+
 	publicFS, err := fs.Sub(docRoot, "public")
 	if err != nil {
 		log.Fatal(err)
