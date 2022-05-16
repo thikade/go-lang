@@ -63,7 +63,7 @@ func main() {
 		if id == "alex" {
 			w.Write([]byte(fmt.Sprintf("Found customer: %s", id)))
 		} else {
-			http.Error(w, fmt.Sprintf("Customer %s not found", id), http.StatusNotFound)
+			http.Error(w, fmt.Sprintf("Customer %s not found", id), http.StatusTeapot)
 		}
 	})
 
@@ -94,13 +94,10 @@ func main() {
 			return
 		}
 
-		buffer := bytes.Buffer{}
-		err = myT.Execute(&buffer, pets)
-		if err != nil {
-			panic(err)
+		if err := myT.Execute(w, pets); err != nil {
+			log.Println(err)
+			http.Error(w, "Sorry, something went wrong in Template rendering ", http.StatusInternalServerError)
 		}
-		w.Write(buffer.Bytes())
-
 	})
 
 	// ********************************

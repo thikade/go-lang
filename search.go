@@ -39,7 +39,7 @@ func (obj *SearchObj) Validate() bool {
 }
 
 func (obj *SearchObj) ExecuteSearch() bool {
-	var results int = rand.Intn(20) + 1
+	var results int = rand.Intn(30) + 1
 	obj.TotalResults = results
 	obj.Results = make([]string, results, results)
 	for index := range obj.Results {
