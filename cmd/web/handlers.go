@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"github.com/gorilla/mux"
+	"github.com/thikade/webgo/cmd/search"
 	"github.com/thikade/webgo/ui"
 )
 
@@ -123,17 +124,17 @@ func search_GET(w http.ResponseWriter, r *http.Request) {
 // ********************************
 func search_POST(w http.ResponseWriter, r *http.Request) {
 	// Step 1: Validate form
-	search := &SearchObj{
+	obj := &search.SearchObj{
 		Days:  r.PostFormValue("days"),
 		Token: r.PostFormValue("token"),
 	}
 	// log.Println("DEBUG: PRE Validation")
-	if search.Validate() == false {
+	if obj.Validate() == false {
 		//return
 	}
 
-	search.ExecuteSearch()
+	obj.ExecuteSearch()
 	// render results template
-	render(w, "ui/html/search.html", search)
+	render(w, "ui/html/search.html", obj)
 
 }
