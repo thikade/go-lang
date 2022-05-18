@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -30,6 +31,9 @@ func main() {
 	port := flag.String("port", "8080", "HTTP network address")
 	flag.Parse()
 
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
 	router := mux.NewRouter()
 
 	s := &http.Server{
@@ -37,6 +41,7 @@ func main() {
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
+		ErrorLog:       errorLog,
 		Handler:        router,
 	}
 
@@ -59,6 +64,6 @@ func main() {
 
 	router.HandleFunc("/", home)
 
-	log.Printf("Listening on port: %s\n", *port)
-	log.Fatal(s.ListenAndServe())
+	infoLog.Printf("Listening on port: %s\n", *port)
+	errorLog.Fatal(s.ListenAndServe())
 }
