@@ -43,10 +43,11 @@ func main() {
 	// POST search: execute search
 	router.HandleFunc("/search", search_POST).Methods("POST")
 
-	// Create a file server which serves files out of the "./public" directory.
-	fileServer := http.FileServer(http.Dir("./public/"))
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./ui/static/"))))
+
 	// default: serve from  "./public" folder
-	router.PathPrefix("/").Handler(fileServer)
+	// Create a file server which serves files out of the "./public" directory.
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
 
 	log.Printf("Listening on port: %d\n", port)
 	log.Fatal(s.ListenAndServe())
