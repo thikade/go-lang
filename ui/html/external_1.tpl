@@ -21,7 +21,7 @@
          <tr> 
                <th>Animal</th> 
                <th>Age</th> 
-               <th>?</th> 
+               <th>Weight</th> 
          </tr> 
    </thead> 
    <tbody> 
