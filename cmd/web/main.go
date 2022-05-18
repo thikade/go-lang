@@ -47,7 +47,9 @@ func main() {
 
 	// default: serve from  "./public" folder
 	// Create a file server which serves files out of the "./public" directory.
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
+	// router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
+
+	router.HandleFunc("/", home)
 
 	log.Printf("Listening on port: %d\n", port)
 	log.Fatal(s.ListenAndServe())
