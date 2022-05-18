@@ -8,13 +8,13 @@
                font-size: 16px; 
          } 
          table, th, td { 
-         border: 3px solid gray; 
+         border: 3px solid blue; 
          } 
    </style> 
 </head> 
 <body> 
  
-<h2 alight="center">Presenting Dynamic content!</h2> 
+<h2 alight="center">Presenting EMBEDDED Dynamic content!</h2> 
  
 <table> 
    <thead> 
