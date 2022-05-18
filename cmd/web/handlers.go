@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"github.com/gorilla/mux"
+	"github.com/thikade/webgo/ui"
 )
 
 // renders templates from filesystem (in combination with optional data)
@@ -43,12 +44,11 @@ func customer(w http.ResponseWriter, r *http.Request) {
 // render fixed template from embed.FS
 // ********************************
 func renderEmbeddedFile(w http.ResponseWriter, r *http.Request) {
-	templateFile_demo1, err := fsContent.ReadFile("ui/html/demo1.tpl")
+	templateFile_demo1, err := ui.EfsFiles.ReadFile("html/embedded.tpl")
 	if err != nil {
 		log.Println(err)
-		http.Error(w, fmt.Sprintf("404: template not found: %s", "demo1.tpl"), http.StatusNotFound)
+		http.Error(w, fmt.Sprintf("404: template not found: %s", "html/embedded.tpl"), http.StatusNotFound)
 		return
-
 	}
 	t_demo1 := template.Must(template.New("table").Parse(string(templateFile_demo1)))
 
