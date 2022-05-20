@@ -14,16 +14,16 @@ import (
 
 // renders templates from filesystem (in combination with optional data)
 // https://www.alexedwards.net/blog/form-validation-and-processing
-func render(w http.ResponseWriter, filename string, data interface{}) {
+func (app *application) render(w http.ResponseWriter, filename string, data interface{}) {
 	tmpl, err := template.ParseFiles(filename)
 	if err != nil {
-		log.Println(err)
+		app.errorLog.Println(err)
 		http.Error(w, "Sorry, something went wrong", http.StatusInternalServerError)
 		return
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
-		log.Println(err)
+		app.errorLog.Println(err)
 		http.Error(w, "Sorry, something went wrong in Template rendering ", http.StatusInternalServerError)
 	}
 }
@@ -31,7 +31,7 @@ func render(w http.ResponseWriter, filename string, data interface{}) {
 // ********************************
 // home
 // ********************************
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	// Initialize a slice containing the paths to the two files. It's important
 	// to note that the file containing our base template must be the *first*
@@ -47,7 +47,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// paths as a variadic parameter?
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Println(err.Error())
+		app.errorLog.Println(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
@@ -64,7 +64,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 // ********************************
 // get a customer id and handle response
 // ********************************
-func customer(w http.ResponseWriter, r *http.Request) {
+func (app *application) customer(w http.ResponseWriter, r *http.Request) {
 	v := mux.Vars(r)
 	id := v["id"]
 	if id == "alex" {
@@ -77,10 +77,10 @@ func customer(w http.ResponseWriter, r *http.Request) {
 // ********************************
 // render fixed template from embed.FS
 // ********************************
-func renderEmbeddedFile(w http.ResponseWriter, r *http.Request) {
+func (app *application) renderEmbeddedFile(w http.ResponseWriter, r *http.Request) {
 	templateFile_demo1, err := ui.EfsFiles.ReadFile("html/embedded.tpl")
 	if err != nil {
-		log.Println(err)
+		app.errorLog.Println(err)
 		http.Error(w, fmt.Sprintf("404: template not found: %s", "html/embedded.tpl"), http.StatusNotFound)
 		return
 	}
@@ -97,17 +97,18 @@ func renderEmbeddedFile(w http.ResponseWriter, r *http.Request) {
 // ********************************
 // dynamically load file: template_x from local filesystem
 // ********************************
-func renderTemplate(w http.ResponseWriter, r *http.Request) {
+func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request) {
 	v := mux.Vars(r)
 	id := v["tpl"]
 
 	myT, err := template.ParseGlob(fmt.Sprintf("ui/html/external_%s.tpl", id))
 	if err != nil {
+		app.errorLog.Println("template not found!")
 		http.Error(w, fmt.Sprintf("404: template not found: external_%s.tpl", id), http.StatusNotFound)
 		return
 	}
 	if err := myT.Execute(w, pets); err != nil {
-		log.Println(err)
+		app.errorLog.Println(err)
 		http.Error(w, "Sorry, something went wrong in Template rendering ", http.StatusInternalServerError)
 	}
 }
@@ -115,14 +116,14 @@ func renderTemplate(w http.ResponseWriter, r *http.Request) {
 // ********************************
 // GET searchForm: display form
 // ********************************
-func search_GET(w http.ResponseWriter, r *http.Request) {
-	render(w, "ui/html/search.html", nil)
+func (app *application) search_GET(w http.ResponseWriter, r *http.Request) {
+	app.render(w, "ui/html/search.html", nil)
 }
 
 // ********************************
 // POST search: execute search
 // ********************************
-func search_POST(w http.ResponseWriter, r *http.Request) {
+func (app *application) search_POST(w http.ResponseWriter, r *http.Request) {
 	// Step 1: Validate form
 	obj := &search.SearchObj{
 		Days:  r.PostFormValue("days"),
@@ -135,6 +136,6 @@ func search_POST(w http.ResponseWriter, r *http.Request) {
 
 	obj.ExecuteSearch()
 	// render results template
-	render(w, "ui/html/search.html", obj)
+	app.render(w, "ui/html/search.html", obj)
 
 }
