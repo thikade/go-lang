@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/gorilla/mux"
 )
 
 // define some data to fill in our templates
@@ -41,35 +39,14 @@ func main() {
 		outLog:   outLog,
 	}
 
-	router := mux.NewRouter()
-
 	s := &http.Server{
 		Addr:           fmt.Sprintf(":%s", *port),
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 		ErrorLog:       errorLog,
-		Handler:        router,
+		Handler:        app.routes(),
 	}
-
-	// get a customer id and handle response
-	router.HandleFunc("/customer/{id:[-a-zA-Z_0-9.]+}", app.customer)
-	// renders fixed template from embed.FS
-	router.HandleFunc("/embed", app.renderEmbeddedFile)
-	// dynamically load file: template_x from FS
-	router.HandleFunc("/render/{tpl:[0-9]+}", app.renderTemplate)
-	// GET searchForm: display form
-	router.HandleFunc("/search", app.search_GET).Methods("GET")
-	// POST search: execute search
-	router.HandleFunc("/search", app.search_POST).Methods("POST")
-
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./ui/static/"))))
-
-	// default: serve from  "./public" folder
-	// Create a file server which serves files out of the "./public" directory.
-	// router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
-
-	router.HandleFunc("/", app.home)
 
 	outLog.Printf("Listening on port: %s\n", *port)
 	errorLog.Fatal(s.ListenAndServe())
