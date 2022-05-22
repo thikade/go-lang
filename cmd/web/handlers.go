@@ -129,17 +129,19 @@ func (app *application) search_GET(w http.ResponseWriter, r *http.Request) {
 // ********************************
 func (app *application) search_POST(w http.ResponseWriter, r *http.Request) {
 	// Step 1: Validate form
-	obj := &search.SearchObj{
+	app.searchObj = &search.SearchObj{
 		Days:  r.PostFormValue("days"),
 		Token: r.PostFormValue("token"),
 	}
 	// log.Println("DEBUG: PRE Validation")
-	if obj.Validate() == false {
-		//return
+	if app.searchObj.Validate() == true {
+		app.searchObj.ExecuteSearch()
+	} else {
+		app.errorLog.Println("bad search input")
+		app.searchObj.ExecuteSearch()
 	}
 
-	obj.ExecuteSearch()
 	// render results template
-	app.render(w, "ui/html/search.html", obj)
+	app.render(w, "ui/html/search.html", app.searchObj)
 
 }

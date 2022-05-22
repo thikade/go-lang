@@ -28,6 +28,7 @@
 <div>
     {{- if .TotalResults }}
     <h2>Results: {{ .TotalResults }}</h2>
+    <h3>Search Parameters: Days='{{ .Days }}' Text='{{ .Token }}'</h3>
     <table>
         <tbody>
             {{- range $i, $e := .Results }}
@@ -38,7 +39,7 @@
         </tbody>
     </table>
     {{- else }}
-    <h2>Results</h2>
+    <h2>No Results yet.</h2>
     None
     {{- end }}
 </div>

@@ -35,8 +35,9 @@ func main() {
 	// Initialize a new instance of our application struct, containing the
 	// dependencies.
 	app := &application{
-		errorLog: errorLog,
-		outLog:   outLog,
+		errorLog:  errorLog,
+		outLog:    outLog,
+		searchObj: nil,
 	}
 
 	s := &http.Server{

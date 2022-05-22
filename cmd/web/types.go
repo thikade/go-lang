@@ -1,6 +1,10 @@
 package main
 
-import "log"
+import (
+	"log"
+
+	"github.com/thikade/webgo/cmd/search"
+)
 
 type Pets []struct {
 	Animal string
@@ -11,6 +15,7 @@ type Pets []struct {
 // web application. For now we'll only include fields for the two custom loggers, but
 // we'll add more to it as the build progresses.
 type application struct {
-	errorLog *log.Logger
-	outLog   *log.Logger
+	errorLog  *log.Logger
+	outLog    *log.Logger
+	searchObj *search.SearchObj
 }
