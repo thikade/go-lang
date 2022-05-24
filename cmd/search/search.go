@@ -1,8 +1,10 @@
 package search
 
 import (
+	"encoding/json"
 	"fmt"
-	"math/rand"
+	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -26,12 +28,55 @@ func (obj *SearchObj) Validate() bool {
 	return len(obj.Errors) == 0
 }
 
-func (obj *SearchObj) ExecuteSearch() bool {
-	var results int = rand.Intn(30) + 1
-	obj.TotalResults = results
-	obj.Results = make([]string, results, results)
-	for index := range obj.Results {
-		obj.Results[index] = fmt.Sprintf("%d", (index+1)*3)
+func (obj *SearchObj) ExecuteSearch() string {
+	var jql string = `project = Infrastructure AND resolutiondate > "-500d"`
+	queryParams := fmt.Sprintf("maxResults=1&jql=%s", url.QueryEscape(jql))
+	jiraUrl := url.URL{
+		// User:        &url.Userinfo{},
+		Scheme:     "https",
+		Host:       "jira.spring.io",
+		Path:       "/rest/api/2/search",
+		RawQuery:   queryParams,
+		ForceQuery: false,
+		// RawPath:     "",
 	}
-	return true
+	strUrl := jiraUrl.String()
+	fmt.Printf("curl: %s\n", strUrl)
+	resp, err := http.Get(strUrl)
+	if err != nil {
+		fmt.Printf("curl error")
+		return ""
+	}
+	defer resp.Body.Close()
+
+	// body, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	fmt.Printf("body read error")
+	// 	return nil
+	// }
+	// return body
+
+	retValue := ""
+
+	// parse json result
+	var result map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&result)
+	if val, ok := result["total"]; ok {
+		// switch val.(type) {
+		// case bool:
+		// 	fmt.Printf("bool: %v\n", val)
+		// case string:
+		// 	fmt.Printf("string: %v\n", val)
+		// case int:
+		// 	fmt.Printf("int: %v\n", val)
+		// case float64:
+		// 	fmt.Printf("float64: %v\n", val)
+		// default:
+		// 	fmt.Printf("unknown: %v\n", val)
+		// }
+		retValue = fmt.Sprintf("%v", val)
+	}
+
+	return retValue
+
 }

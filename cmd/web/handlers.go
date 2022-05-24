@@ -134,14 +134,18 @@ func (app *application) search_POST(w http.ResponseWriter, r *http.Request) {
 		Token: r.PostFormValue("token"),
 	}
 	// log.Println("DEBUG: PRE Validation")
-	if app.searchObj.Validate() == true {
-		app.searchObj.ExecuteSearch()
-	} else {
+	if app.searchObj.Validate() == false {
 		app.errorLog.Println("bad search input")
-		app.searchObj.ExecuteSearch()
 	}
 
-	// render results template
-	app.render(w, "ui/html/search.html", app.searchObj)
+	queryResult := app.searchObj.ExecuteSearch()
+	if queryResult != "" {
+		w.Write([]byte(queryResult))
+	} else {
+		w.Write([]byte("search error!"))
+	}
+
+	// // render results template
+	// app.render(w, "ui/html/search.html", app.searchObj)
 
 }
