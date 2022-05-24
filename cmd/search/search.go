@@ -29,7 +29,8 @@ func (obj *SearchObj) Validate() bool {
 }
 
 func (obj *SearchObj) ExecuteSearch() string {
-	var jql string = `project = Infrastructure AND resolutiondate > "-500d"`
+	// var jql string = `project = Infrastructure AND resolutiondate > "-500d"`
+	jql := fmt.Sprintf("project = Infrastructure AND resolutiondate > \"-%sd\"", obj.Days)
 	queryParams := fmt.Sprintf("maxResults=1&jql=%s", url.QueryEscape(jql))
 	jiraUrl := url.URL{
 		// User:        &url.Userinfo{},
